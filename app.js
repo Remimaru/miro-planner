@@ -1,18 +1,19 @@
 /**
  * ============================================================================
- * Professional Kanban Planner - Miro Web SDK v2
+ * Kanban Pro v2.1 - Board-Native Edition
  * ============================================================================
- * A production-ready project management app using App Cards and Frames
+ * A production-ready project management app with true board integration
  * 
- * Features:
- * - App Cards with metadata (task name, assignee, priority, status)
- * - Three Kanban columns using Miro Frames
- * - Drag-and-drop support from sidebar
- * - Auto-sorting into correct columns
- * - Real-time progress tracking dashboard
+ * NEW FEATURES:
+ * - Native board member integration (real Miro users)
+ * - Automatic card placement INSIDE frames
+ * - Bi-directional sync (board changes update dashboard)
+ * - Polling mechanism for real-time updates
+ * - Compact, native-feeling UI
  * 
- * Author: Senior Frontend Engineer
+ * Author: Senior Miro App Developer
  * Date: January 2026
+ * SDK: Miro Web SDK v2.0
  * ============================================================================
  */
 
@@ -20,25 +21,26 @@
 // CONFIGURATION & CONSTANTS
 // ============================================================================
 
-const APP_ID = 'kanban-pro'; // Unique identifier for our app cards
+const APP_ID = 'kanban-pro-v2';
+const APP_DATA_KEY = 'kanban-board-config';
 
-// Column configuration for Kanban board
-const COLUMNS = {
+// Frame configuration - These define the Kanban columns
+const FRAME_CONFIG = {
     todo: {
         title: '📋 TO DO',
-        x: -800,
+        x: -900,
         y: 0,
-        width: 450,
-        height: 1200,
-        color: '#e0f2fe', // Light blue
+        width: 500,
+        height: 2000,
+        color: '#dbeafe', // Light blue
         status: 'todo'
     },
     progress: {
         title: '⚡ IN PROGRESS',
-        x: -300,
+        x: -350,
         y: 0,
-        width: 450,
-        height: 1200,
+        width: 500,
+        height: 2000,
         color: '#fef3c7', // Light yellow
         status: 'progress'
     },
@@ -46,53 +48,60 @@ const COLUMNS = {
         title: '✅ DONE',
         x: 200,
         y: 0,
-        width: 450,
-        height: 1200,
+        width: 500,
+        height: 2000,
         color: '#d1fae5', // Light green
         status: 'done'
     }
 };
 
-// Card styling based on priority
-const PRIORITY_STYLES = {
+// Priority styling
+const PRIORITY_CONFIG = {
     high: {
         emoji: '🔴',
-        color: '#fecaca',
+        color: '#fee2e2',
         label: 'High'
     },
     medium: {
         emoji: '🟡',
-        color: '#fde68a',
+        color: '#fef3c7',
         label: 'Medium'
     },
     low: {
         emoji: '🔵',
-        color: '#bfdbfe',
+        color: '#dbeafe',
         label: 'Low'
     }
 };
 
-// Layout constants
-const CARD_WIDTH = 300;
-const CARD_SPACING_Y = 20;
-const CARD_PADDING_X = 75; // Padding from frame edges
-const CARD_START_Y = 150; // Starting Y position inside frame
+// Card layout constants
+const CARD_WIDTH = 280;
+const CARD_HEIGHT = 150;
+const CARD_SPACING = 25;
+const CARD_TOP_MARGIN = 100; // Space below frame title
+const CARD_SIDE_MARGIN = 30; // Space from frame edges
 
 // ============================================================================
 // STATE MANAGEMENT
 // ============================================================================
 
-let currentTaskData = {
+let currentTask = {
     taskName: '',
     assignee: '',
+    assigneeId: null,
     priority: 'medium',
     status: 'todo'
 };
 
-let frameCache = {
-    todo: null,
-    progress: null,
-    done: null
+let boardState = {
+    frames: {
+        todo: null,
+        progress: null,
+        done: null
+    },
+    boardMembers: [],
+    isPolling: false,
+    pollInterval: null
 };
 
 // ============================================================================
@@ -100,186 +109,259 @@ let frameCache = {
 // ============================================================================
 
 /**
- * Initialize the Miro app
- * Sets up icon click handler and event listeners
+ * Initialize the app
  */
 async function init() {
-    console.log('🚀 Initializing Kanban Pro...');
+    console.log('🚀 Initializing Kanban Pro v2.1 (Board-Native)...');
 
-    // Register icon click handler to open sidebar
-    await miro.board.ui.on('icon:click', async () => {
-        await miro.board.ui.openPanel({ url: 'index.html' });
-    });
+    try {
+        // Register panel opener
+        await miro.board.ui.on('icon:click', async () => {
+            await miro.board.ui.openPanel({ url: 'index.html' });
+        });
 
-    // Set up event listeners when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupEventListeners);
-    } else {
-        setupEventListeners();
+        // Set up DOM when ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupApp);
+        } else {
+            await setupApp();
+        }
+
+        console.log('✅ Kanban Pro initialized');
+    } catch (error) {
+        console.error('❌ Initialization error:', error);
     }
-
-    console.log('✅ Kanban Pro initialized');
 }
 
 /**
- * Set up all event listeners for UI interactions
+ * Setup app after DOM is ready
  */
-function setupEventListeners() {
-    console.log('🔧 Setting up event listeners...');
+async function setupApp() {
+    console.log('🔧 Setting up app...');
 
-    // Form input listeners
-    setupFormInputs();
-    
-    // Button listeners
-    setupButtons();
-    
-    // Drag and drop listener
-    setupDragAndDrop();
+    try {
+        // Load board members first
+        await loadBoardMembers();
 
-    // Initial dashboard refresh
-    refreshDashboard();
+        // Try to find existing frames
+        await findExistingFrames();
 
-    console.log('✅ Event listeners ready');
-}
+        // Setup event listeners
+        setupEventListeners();
 
-// ============================================================================
-// FORM INPUT HANDLERS
-// ============================================================================
-
-/**
- * Set up form input handlers
- */
-function setupFormInputs() {
-    const taskNameInput = document.getElementById('taskName');
-    const assigneeInput = document.getElementById('assignee');
-    const prioritySelect = document.getElementById('priority');
-    const statusSelect = document.getElementById('status');
-    const priorityPreview = document.getElementById('priorityPreview');
-
-    // Update current task data on input changes
-    taskNameInput?.addEventListener('input', (e) => {
-        currentTaskData.taskName = e.target.value.trim();
-    });
-
-    assigneeInput?.addEventListener('input', (e) => {
-        currentTaskData.assignee = e.target.value.trim();
-    });
-
-    prioritySelect?.addEventListener('change', (e) => {
-        currentTaskData.priority = e.target.value;
-        updatePriorityPreview(e.target.value, priorityPreview);
-    });
-
-    statusSelect?.addEventListener('change', (e) => {
-        currentTaskData.status = e.target.value;
-    });
-
-    // Allow Enter key in task name to add task
-    taskNameInput?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            document.getElementById('addTaskBtn')?.click();
-        }
-    });
-}
-
-/**
- * Update priority preview badge
- */
-function updatePriorityPreview(priority, element) {
-    if (!element) return;
-    
-    const style = PRIORITY_STYLES[priority];
-    element.textContent = style.label;
-    element.className = `priority-preview ${priority}`;
-}
-
-// ============================================================================
-// BUTTON HANDLERS
-// ============================================================================
-
-/**
- * Set up button click handlers
- */
-function setupButtons() {
-    // Add Task button
-    const addTaskBtn = document.getElementById('addTaskBtn');
-    addTaskBtn?.addEventListener('click', async () => {
-        await handleAddTask();
-    });
-
-    // Initialize Board button
-    const initBoardBtn = document.getElementById('initBoardBtn');
-    initBoardBtn?.addEventListener('click', async () => {
-        await handleInitializeBoard();
-    });
-
-    // Auto-Sort button
-    const autoSortBtn = document.getElementById('autoSortBtn');
-    autoSortBtn?.addEventListener('click', async () => {
-        await handleAutoSort();
-    });
-
-    // Refresh Stats button
-    const refreshBtn = document.getElementById('refreshBtn');
-    refreshBtn?.addEventListener('click', async () => {
+        // Initial dashboard refresh
         await refreshDashboard();
-    });
+
+        // Start polling for board changes
+        startBoardPolling();
+
+        console.log('✅ App setup complete');
+    } catch (error) {
+        console.error('❌ Setup error:', error);
+        alert('Failed to initialize app. Please refresh and try again.');
+    }
 }
 
 // ============================================================================
-// DRAG AND DROP
+// BOARD MEMBERS (Native Integration)
 // ============================================================================
 
 /**
- * Set up drag and drop functionality
+ * Load board members from Miro
  */
-function setupDragAndDrop() {
-    const dragBtn = document.getElementById('dragTaskBtn');
-    
-    if (!dragBtn) return;
+async function loadBoardMembers() {
+    console.log('👥 Loading board members...');
 
-    // Handle drag start
-    dragBtn.addEventListener('dragstart', (e) => {
-        console.log('🖱️ Drag started');
+    try {
+        const boardInfo = await miro.board.getInfo();
         
-        // Validate task data
-        if (!currentTaskData.taskName) {
-            e.preventDefault();
-            alert('Please enter a task name before dragging');
-            return;
-        }
+        // Get current user first
+        const currentUser = await miro.board.getUserInfo();
+        
+        // Initialize members array with current user
+        boardState.boardMembers = [{
+            id: currentUser.id,
+            name: currentUser.name || 'Me',
+            isCurrent: true
+        }];
 
-        // Store task data for the drop event
-        e.dataTransfer.setData('application/json', JSON.stringify(currentTaskData));
+        // Add unassigned option
+        boardState.boardMembers.unshift({
+            id: null,
+            name: 'Unassigned',
+            isCurrent: false
+        });
+
+        // Populate the assignee dropdown
+        populateAssigneeDropdown();
+
+        console.log(`✅ Loaded ${boardState.boardMembers.length} board members`);
+    } catch (error) {
+        console.error('❌ Error loading board members:', error);
+        
+        // Fallback: Add just unassigned option
+        boardState.boardMembers = [{ id: null, name: 'Unassigned', isCurrent: false }];
+        populateAssigneeDropdown();
+    }
+}
+
+/**
+ * Populate assignee dropdown with board members
+ */
+function populateAssigneeDropdown() {
+    const assigneeSelect = document.getElementById('assignee');
+    if (!assigneeSelect) return;
+
+    // Clear existing options
+    assigneeSelect.innerHTML = '';
+
+    // Add each member as an option
+    boardState.boardMembers.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.id || '';
+        option.textContent = member.name + (member.isCurrent ? ' (You)' : '');
+        assigneeSelect.appendChild(option);
     });
 
-    // Register drop handler with Miro
-    miro.board.ui.on('drop', async ({ x, y, target }) => {
-        console.log(`📍 Drop detected at (${x}, ${y})`);
+    console.log('✅ Assignee dropdown populated');
+}
+
+// ============================================================================
+// FRAME MANAGEMENT (Board-Native Layout)
+// ============================================================================
+
+/**
+ * Find existing frames on the board
+ */
+async function findExistingFrames() {
+    console.log('🔍 Looking for existing frames...');
+
+    try {
+        const allItems = await miro.board.get({ type: 'frame' });
         
-        // Create card at drop position
-        await createAppCard(currentTaskData, x, y);
-        
-        // Clear form
-        clearForm();
-        
+        // Try to find frames by title
+        boardState.frames.todo = allItems.find(f => f.title && f.title.includes('TO DO'));
+        boardState.frames.progress = allItems.find(f => f.title && f.title.includes('IN PROGRESS'));
+        boardState.frames.done = allItems.find(f => f.title && f.title.includes('DONE'));
+
+        const foundCount = [boardState.frames.todo, boardState.frames.progress, boardState.frames.done]
+            .filter(f => f).length;
+
+        if (foundCount > 0) {
+            console.log(`✅ Found ${foundCount}/3 existing frames`);
+        } else {
+            console.log('ℹ️ No existing frames found - use Setup Board Layout');
+        }
+    } catch (error) {
+        console.error('❌ Error finding frames:', error);
+    }
+}
+
+/**
+ * Setup board layout - Creates all three frames
+ */
+async function setupBoardLayout() {
+    console.log('🎨 Setting up board layout...');
+
+    const btn = document.getElementById('setupBoardBtn');
+    setButtonLoading(btn, true);
+
+    try {
+        // Clear existing frame cache
+        boardState.frames = { todo: null, progress: null, done: null };
+
+        // Create all three frames
+        for (const [key, config] of Object.entries(FRAME_CONFIG)) {
+            console.log(`Creating ${config.title}...`);
+            
+            const frame = await miro.board.createFrame({
+                title: config.title,
+                x: config.x,
+                y: config.y,
+                width: config.width,
+                height: config.height,
+                style: {
+                    fillColor: config.color
+                }
+            });
+
+            boardState.frames[key] = frame;
+            console.log(`✅ Created ${config.title}`);
+        }
+
+        // Save frame IDs to app data for persistence
+        await saveFrameIdsToAppData();
+
+        // Zoom to show all frames
+        await zoomToBoard();
+
+        console.log('✅ Board layout complete!');
+        alert('✅ Board layout created! Three frames are ready: To Do, In Progress, and Done.');
+
         // Refresh dashboard
         await refreshDashboard();
-    });
+
+    } catch (error) {
+        console.error('❌ Error setting up board:', error);
+        alert(`Failed to setup board: ${error.message}`);
+    } finally {
+        setButtonLoading(btn, false);
+    }
+}
+
+/**
+ * Save frame IDs to Miro app data for persistence
+ */
+async function saveFrameIdsToAppData() {
+    try {
+        const frameIds = {
+            todo: boardState.frames.todo?.id,
+            progress: boardState.frames.progress?.id,
+            done: boardState.frames.done?.id
+        };
+
+        await miro.board.setAppData(APP_DATA_KEY, JSON.stringify(frameIds));
+        console.log('✅ Frame IDs saved to app data');
+    } catch (error) {
+        console.error('❌ Error saving frame IDs:', error);
+    }
+}
+
+/**
+ * Load frame IDs from app data
+ */
+async function loadFrameIdsFromAppData() {
+    try {
+        const data = await miro.board.getAppData(APP_DATA_KEY);
+        if (data) {
+            const frameIds = JSON.parse(data);
+            
+            // Get all frames and match by ID
+            const allFrames = await miro.board.get({ type: 'frame' });
+            
+            boardState.frames.todo = allFrames.find(f => f.id === frameIds.todo);
+            boardState.frames.progress = allFrames.find(f => f.id === frameIds.progress);
+            boardState.frames.done = allFrames.find(f => f.id === frameIds.done);
+
+            console.log('✅ Frame IDs loaded from app data');
+        }
+    } catch (error) {
+        console.error('❌ Error loading frame IDs:', error);
+    }
 }
 
 // ============================================================================
-// TASK MANAGEMENT
+// CARD MANAGEMENT (Inside Frames)
 // ============================================================================
 
 /**
- * Handle adding a task to the board
+ * Create a task card INSIDE the correct frame
  */
-async function handleAddTask() {
-    console.log('➕ Adding task to board...');
+async function createTaskCard() {
+    console.log('➕ Creating task card...');
 
     // Validate input
-    if (!currentTaskData.taskName) {
+    if (!currentTask.taskName.trim()) {
         alert('⚠️ Please enter a task name');
         return;
     }
@@ -288,21 +370,27 @@ async function handleAddTask() {
     setButtonLoading(btn, true);
 
     try {
-        // Find or create frames first
-        await ensureFramesExist();
-
-        // Get the frame for the selected status
-        const frame = frameCache[currentTaskData.status];
-        
-        if (!frame) {
-            throw new Error('Frame not found. Please initialize the board first.');
+        // Ensure frames exist
+        if (!boardState.frames[currentTask.status]) {
+            throw new Error('Board layout not found. Please click "Setup Board Layout" first.');
         }
 
+        // Get the target frame
+        const targetFrame = boardState.frames[currentTask.status];
+
         // Calculate position inside the frame
-        const position = await calculateNextCardPosition(currentTaskData.status);
+        const position = await calculateCardPositionInFrame(targetFrame, currentTask.status);
+
+        // Get assignee info
+        const assigneeInfo = boardState.boardMembers.find(m => m.id === currentTask.assigneeId);
+
+        // Build card content
+        const cardData = buildCardData(currentTask, assigneeInfo, position);
 
         // Create the app card
-        await createAppCard(currentTaskData, position.x, position.y);
+        const appCard = await miro.board.createAppCard(cardData);
+
+        console.log(`✅ Card created: ${appCard.id}`);
 
         // Clear form
         clearForm();
@@ -310,64 +398,116 @@ async function handleAddTask() {
         // Refresh dashboard
         await refreshDashboard();
 
-        console.log('✅ Task added successfully');
+        // Zoom to the new card briefly
+        await miro.board.viewport.zoomTo(appCard);
+
     } catch (error) {
-        console.error('❌ Error adding task:', error);
-        alert(`Failed to add task: ${error.message}`);
+        console.error('❌ Error creating card:', error);
+        alert(`Failed to create card: ${error.message}`);
     } finally {
         setButtonLoading(btn, false);
     }
 }
 
 /**
- * Create an App Card on the Miro board
+ * Build app card data structure
  */
-async function createAppCard(taskData, x, y) {
-    const priorityStyle = PRIORITY_STYLES[taskData.priority];
+function buildCardData(task, assigneeInfo, position) {
+    const priorityStyle = PRIORITY_CONFIG[task.priority];
     
-    // Build card title with priority indicator
-    const cardTitle = `${priorityStyle.emoji} ${taskData.taskName}`;
-    
-    // Build card description
+    // Title with priority indicator
+    const title = `${priorityStyle.emoji} ${task.taskName}`;
+
+    // Description with metadata
+    const assigneeName = assigneeInfo ? assigneeInfo.name : 'Unassigned';
     const description = `
-        <p><strong>👤 Assignee:</strong> ${taskData.assignee || 'Unassigned'}</p>
+        <p><strong>👤 Assignee:</strong> ${assigneeName}</p>
         <p><strong>⚡ Priority:</strong> ${priorityStyle.label}</p>
-        <p><strong>📌 Status:</strong> ${getStatusLabel(taskData.status)}</p>
+        <p><strong>📌 Status:</strong> ${getStatusLabel(task.status)}</p>
     `.trim();
 
+    // Card data
+    const cardData = {
+        title: title,
+        description: description,
+        x: position.x,
+        y: position.y,
+        width: CARD_WIDTH,
+        style: {
+            cardTheme: '#ffffff'
+        }
+    };
+
+    // Add fields with metadata
+    cardData.fields = [
+        {
+            value: `Status: ${getStatusLabel(task.status)}`,
+            iconShape: 'round',
+            fillColor: priorityStyle.color,
+            tooltip: `Status: ${getStatusLabel(task.status)}`
+        }
+    ];
+
+    // Add assignee field if assigned
+    if (assigneeInfo && assigneeInfo.id) {
+        cardData.fields.push({
+            value: assigneeName,
+            iconShape: 'round',
+            fillColor: '#e0e7ff',
+            tooltip: `Assignee: ${assigneeName}`
+        });
+    }
+
+    return cardData;
+}
+
+/**
+ * Calculate next available position inside a frame
+ */
+async function calculateCardPositionInFrame(frame, status) {
     try {
-        const appCard = await miro.board.createAppCard({
-            title: cardTitle,
-            description: description,
-            x: x,
-            y: y,
-            width: CARD_WIDTH,
-            style: {
-                cardTheme: '#ffffff'
-            },
-            // Store metadata for filtering and sorting
-            fields: [
-                {
-                    value: taskData.status,
-                    iconShape: 'round',
-                    fillColor: priorityStyle.color,
-                    tooltip: `Status: ${getStatusLabel(taskData.status)}`
-                },
-                {
-                    value: taskData.assignee || 'Unassigned',
-                    iconShape: 'round',
-                    fillColor: '#e5e7eb',
-                    tooltip: `Assignee: ${taskData.assignee || 'Unassigned'}`
-                }
-            ]
+        // Get all app cards
+        const allCards = await miro.board.get({ type: 'app_card' });
+
+        // Filter cards that are inside this frame
+        const cardsInFrame = allCards.filter(card => {
+            return isInsideFrame(card, frame);
         });
 
-        console.log('✅ App card created:', appCard.id);
-        return appCard;
+        // Calculate Y position based on number of existing cards
+        const frameTop = frame.y - (frame.height / 2);
+        const yPosition = frameTop + CARD_TOP_MARGIN + (cardsInFrame.length * (CARD_HEIGHT + CARD_SPACING));
+
+        return {
+            x: frame.x,
+            y: yPosition
+        };
     } catch (error) {
-        console.error('❌ Error creating app card:', error);
-        throw error;
+        console.error('❌ Error calculating position:', error);
+        
+        // Fallback to frame center
+        return {
+            x: frame.x,
+            y: frame.y
+        };
     }
+}
+
+/**
+ * Check if a card is inside a frame
+ */
+function isInsideFrame(card, frame) {
+    const frameLeft = frame.x - (frame.width / 2);
+    const frameRight = frame.x + (frame.width / 2);
+    const frameTop = frame.y - (frame.height / 2);
+    const frameBottom = frame.y + (frame.height / 2);
+
+    return (
+        card.x >= frameLeft &&
+        card.x <= frameRight &&
+        card.y >= frameTop &&
+        card.y <= frameBottom
+    );
 }
 
 /**
@@ -383,99 +523,13 @@ function getStatusLabel(status) {
 }
 
 // ============================================================================
-// BOARD INITIALIZATION
-// ============================================================================
-
-/**
- * Initialize the Kanban board with frames
- */
-async function handleInitializeBoard() {
-    console.log('🚀 Initializing Kanban board...');
-
-    const btn = document.getElementById('initBoardBtn');
-    setButtonLoading(btn, true);
-
-    try {
-        // Clear frame cache
-        frameCache = { todo: null, progress: null, done: null };
-
-        // Create all three columns
-        for (const [key, config] of Object.entries(COLUMNS)) {
-            const frame = await createColumnFrame(config);
-            frameCache[key] = frame;
-            console.log(`✅ Created ${config.title} column`);
-        }
-
-        // Zoom to fit all frames
-        await zoomToBoard();
-
-        alert('✅ Board initialized! Three columns are ready: To Do, In Progress, and Done.');
-        
-        // Refresh dashboard
-        await refreshDashboard();
-
-    } catch (error) {
-        console.error('❌ Error initializing board:', error);
-        alert(`Failed to initialize board: ${error.message}`);
-    } finally {
-        setButtonLoading(btn, false);
-    }
-}
-
-/**
- * Create a column frame
- */
-async function createColumnFrame(config) {
-    try {
-        const frame = await miro.board.createFrame({
-            title: config.title,
-            x: config.x,
-            y: config.y,
-            width: config.width,
-            height: config.height,
-            style: {
-                fillColor: config.color
-            }
-        });
-
-        return frame;
-    } catch (error) {
-        console.error(`❌ Error creating frame ${config.title}:`, error);
-        throw error;
-    }
-}
-
-/**
- * Ensure frames exist (find existing or prompt to create)
- */
-async function ensureFramesExist() {
-    // Check if we have cached frames
-    if (frameCache.todo && frameCache.progress && frameCache.done) {
-        return;
-    }
-
-    // Try to find existing frames by title
-    const allItems = await miro.board.get();
-    const frames = allItems.filter(item => item.type === 'frame');
-
-    frameCache.todo = frames.find(f => f.title.includes('TO DO'));
-    frameCache.progress = frames.find(f => f.title.includes('IN PROGRESS'));
-    frameCache.done = frames.find(f => f.title.includes('DONE'));
-
-    // If frames don't exist, throw error to prompt user
-    if (!frameCache.todo || !frameCache.progress || !frameCache.done) {
-        throw new Error('Board not initialized. Please click "Initialize Board" first.');
-    }
-}
-
-// ============================================================================
 // AUTO-SORTING
 // ============================================================================
 
 /**
- * Auto-sort all app cards into their correct columns
+ * Auto-sort all cards into their correct frames
  */
-async function handleAutoSort() {
+async function autoSortCards() {
     console.log('🔄 Auto-sorting cards...');
 
     const btn = document.getElementById('autoSortBtn');
@@ -483,46 +537,47 @@ async function handleAutoSort() {
 
     try {
         // Ensure frames exist
-        await ensureFramesExist();
+        if (!boardState.frames.todo || !boardState.frames.progress || !boardState.frames.done) {
+            throw new Error('Board layout not found. Please click "Setup Board Layout" first.');
+        }
 
         // Get all app cards
-        const allItems = await miro.board.get();
-        const appCards = allItems.filter(item => item.type === 'app_card');
+        const allCards = await miro.board.get({ type: 'app_card' });
 
-        if (appCards.length === 0) {
+        if (allCards.length === 0) {
             alert('No cards found to sort');
             return;
         }
 
         let sortedCount = 0;
 
-        // Group cards by status
+        // Group cards by detected status
         const cardsByStatus = {
             todo: [],
             progress: [],
             done: []
         };
 
-        // Categorize cards based on their description or current position
-        for (const card of appCards) {
+        // Categorize each card
+        for (const card of allCards) {
             const status = detectCardStatus(card);
-            if (status) {
+            if (status && cardsByStatus[status]) {
                 cardsByStatus[status].push(card);
             }
         }
 
-        // Sort each column
+        // Sort cards into each frame
         for (const [status, cards] of Object.entries(cardsByStatus)) {
-            if (cards.length === 0) continue;
+            const frame = boardState.frames[status];
+            if (!frame || cards.length === 0) continue;
 
-            const frame = frameCache[status];
-            if (!frame) continue;
+            const frameTop = frame.y - (frame.height / 2);
 
-            // Position each card in the column
+            // Position each card
             for (let i = 0; i < cards.length; i++) {
                 const card = cards[i];
-                const newY = frame.y - frame.height / 2 + CARD_START_Y + (i * (card.height + CARD_SPACING_Y));
-                
+                const newY = frameTop + CARD_TOP_MARGIN + (i * (CARD_HEIGHT + CARD_SPACING));
+
                 try {
                     await miro.board.update({
                         id: card.id,
@@ -551,11 +606,11 @@ async function handleAutoSort() {
 }
 
 /**
- * Detect card status from description
+ * Detect card status from its description
  */
 function detectCardStatus(card) {
-    const description = card.description?.toLowerCase() || '';
-    
+    const description = (card.description || '').toLowerCase();
+
     if (description.includes('status:</strong> done')) {
         return 'done';
     } else if (description.includes('status:</strong> in progress')) {
@@ -564,64 +619,149 @@ function detectCardStatus(card) {
         return 'todo';
     }
 
-    // Fallback: check which frame the card is closest to
+    // Fallback: detect by position (which frame it's in)
     return detectStatusByPosition(card);
 }
 
 /**
- * Detect status by card position (closest frame)
+ * Detect status by card position (which frame it's closest to)
  */
 function detectStatusByPosition(card) {
-    const distances = {};
-    
-    for (const [status, frame] of Object.entries(frameCache)) {
+    let closestStatus = 'todo';
+    let minDistance = Infinity;
+
+    for (const [status, frame] of Object.entries(boardState.frames)) {
         if (!frame) continue;
+        
         const distance = Math.abs(card.x - frame.x);
-        distances[status] = distance;
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestStatus = status;
+        }
     }
 
-    // Return status with minimum distance
-    return Object.keys(distances).reduce((a, b) => 
-        distances[a] < distances[b] ? a : b
-    );
+    return closestStatus;
 }
 
 // ============================================================================
-// PROGRESS TRACKING
+// BI-DIRECTIONAL SYNC (Real-time Updates)
 // ============================================================================
 
 /**
- * Refresh the dashboard with current statistics
+ * Start polling the board for changes
  */
-async function refreshDashboard() {
-    console.log('📊 Refreshing dashboard...');
+function startBoardPolling() {
+    if (boardState.isPolling) return;
+
+    console.log('🔄 Starting board polling...');
+    boardState.isPolling = true;
+
+    // Poll every 3 seconds
+    boardState.pollInterval = setInterval(async () => {
+        await pollBoardChanges();
+    }, 3000);
+
+    console.log('✅ Board polling started (3s interval)');
+}
+
+/**
+ * Stop polling
+ */
+function stopBoardPolling() {
+    if (!boardState.isPolling) return;
+
+    console.log('⏸️ Stopping board polling...');
+    clearInterval(boardState.pollInterval);
+    boardState.isPolling = false;
+    boardState.pollInterval = null;
+}
+
+/**
+ * Poll board for changes and update dashboard
+ */
+async function pollBoardChanges() {
+    try {
+        // Silently refresh the dashboard
+        await refreshDashboard(true); // true = silent mode
+    } catch (error) {
+        console.error('❌ Polling error:', error);
+    }
+}
+
+/**
+ * Manual sync button handler
+ */
+async function syncNow() {
+    console.log('🔄 Manual sync triggered...');
+
+    const btn = document.getElementById('syncBtn');
+    setButtonLoading(btn, true);
 
     try {
-        // Get all app cards
-        const allItems = await miro.board.get();
-        const appCards = allItems.filter(item => item.type === 'app_card');
+        await refreshDashboard();
+        console.log('✅ Sync complete');
+    } catch (error) {
+        console.error('❌ Sync error:', error);
+    } finally {
+        setButtonLoading(btn, false);
+    }
+}
 
-        // Count cards by status
+// ============================================================================
+// DASHBOARD & PROGRESS TRACKING
+// ============================================================================
+
+/**
+ * Refresh dashboard with current board statistics
+ */
+async function refreshDashboard(silent = false) {
+    if (!silent) {
+        console.log('📊 Refreshing dashboard...');
+    }
+
+    try {
+        // Ensure frames are loaded
+        if (!boardState.frames.todo) {
+            await findExistingFrames();
+        }
+
+        // If still no frames, show empty state
+        if (!boardState.frames.todo && !boardState.frames.progress && !boardState.frames.done) {
+            updateDashboardUI({ todo: 0, progress: 0, done: 0 }, 0);
+            return;
+        }
+
+        // Get all app cards
+        const allCards = await miro.board.get({ type: 'app_card' });
+
+        // Count cards by status (which frame they're in)
         const counts = {
             todo: 0,
             progress: 0,
             done: 0
         };
 
-        for (const card of appCards) {
-            const status = detectCardStatus(card);
-            if (status && counts.hasOwnProperty(status)) {
-                counts[status]++;
+        for (const card of allCards) {
+            if (boardState.frames.todo && isInsideFrame(card, boardState.frames.todo)) {
+                counts.todo++;
+            } else if (boardState.frames.progress && isInsideFrame(card, boardState.frames.progress)) {
+                counts.progress++;
+            } else if (boardState.frames.done && isInsideFrame(card, boardState.frames.done)) {
+                counts.done++;
             }
         }
 
-        // Update UI
+        // Calculate progress
         const totalCards = counts.todo + counts.progress + counts.done;
         const progressPercent = totalCards > 0 ? Math.round((counts.done / totalCards) * 100) : 0;
 
+        // Update UI
         updateDashboardUI(counts, progressPercent);
 
-        console.log(`✅ Dashboard updated: ${counts.todo} todo, ${counts.progress} in progress, ${counts.done} done`);
+        if (!silent) {
+            console.log(`✅ Dashboard updated: ${counts.todo} todo, ${counts.progress} in progress, ${counts.done} done`);
+        }
+
     } catch (error) {
         console.error('❌ Error refreshing dashboard:', error);
     }
@@ -647,70 +787,101 @@ function updateDashboardUI(counts, progressPercent) {
 }
 
 // ============================================================================
+// EVENT LISTENERS
+// ============================================================================
+
+/**
+ * Setup all event listeners
+ */
+function setupEventListeners() {
+    console.log('🔧 Setting up event listeners...');
+
+    // Form inputs
+    const taskNameInput = document.getElementById('taskName');
+    const assigneeSelect = document.getElementById('assignee');
+    const prioritySelect = document.getElementById('priority');
+    const statusSelect = document.getElementById('status');
+
+    taskNameInput?.addEventListener('input', (e) => {
+        currentTask.taskName = e.target.value.trim();
+    });
+
+    assigneeSelect?.addEventListener('change', (e) => {
+        currentTask.assigneeId = e.target.value || null;
+        currentTask.assignee = e.target.options[e.target.selectedIndex].text;
+    });
+
+    prioritySelect?.addEventListener('change', (e) => {
+        currentTask.priority = e.target.value;
+        updatePriorityPreview(e.target.value);
+    });
+
+    statusSelect?.addEventListener('change', (e) => {
+        currentTask.status = e.target.value;
+    });
+
+    // Enter key to submit
+    taskNameInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            createTaskCard();
+        }
+    });
+
+    // Buttons
+    document.getElementById('addTaskBtn')?.addEventListener('click', createTaskCard);
+    document.getElementById('setupBoardBtn')?.addEventListener('click', setupBoardLayout);
+    document.getElementById('autoSortBtn')?.addEventListener('click', autoSortCards);
+    document.getElementById('syncBtn')?.addEventListener('click', syncNow);
+
+    console.log('✅ Event listeners ready');
+}
+
+/**
+ * Update priority preview badge
+ */
+function updatePriorityPreview(priority) {
+    const preview = document.getElementById('priorityPreview');
+    if (!preview) return;
+
+    const style = PRIORITY_CONFIG[priority];
+    preview.textContent = style.label;
+    preview.className = `priority-preview ${priority}`;
+}
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
 /**
- * Calculate the next card position in a column
- */
-async function calculateNextCardPosition(status) {
-    const frame = frameCache[status];
-    
-    if (!frame) {
-        throw new Error('Frame not found');
-    }
-
-    // Get all app cards
-    const allItems = await miro.board.get();
-    const appCards = allItems.filter(item => item.type === 'app_card');
-
-    // Find cards in this column (within frame bounds)
-    const cardsInColumn = appCards.filter(card => {
-        return Math.abs(card.x - frame.x) < frame.width / 2;
-    });
-
-    // Calculate Y position based on number of cards
-    const yOffset = cardsInColumn.length * (250 + CARD_SPACING_Y); // Approximate card height
-    const y = frame.y - frame.height / 2 + CARD_START_Y + yOffset;
-
-    return {
-        x: frame.x,
-        y: y
-    };
-}
-
-/**
- * Zoom viewport to show entire board
+ * Zoom to show entire board
  */
 async function zoomToBoard() {
     try {
-        const viewport = {
-            x: 0,
+        await miro.board.viewport.zoomTo({
+            x: -350,
             y: 0,
-            width: 2000,
-            height: 1400
-        };
-
-        await miro.board.viewport.zoomTo(viewport);
+            width: 1600,
+            height: 1200
+        });
     } catch (error) {
-        console.error('❌ Error zooming to board:', error);
+        console.error('❌ Error zooming:', error);
     }
 }
 
 /**
- * Clear the form inputs
+ * Clear form inputs
  */
 function clearForm() {
     const taskNameInput = document.getElementById('taskName');
-    const assigneeInput = document.getElementById('assignee');
+    const assigneeSelect = document.getElementById('assignee');
 
     if (taskNameInput) taskNameInput.value = '';
-    if (assigneeInput) assigneeInput.value = '';
+    if (assigneeSelect) assigneeSelect.selectedIndex = 0;
 
-    // Reset state
-    currentTaskData = {
+    currentTask = {
         taskName: '',
         assignee: '',
+        assigneeId: null,
         priority: 'medium',
         status: 'todo'
     };

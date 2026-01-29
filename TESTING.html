@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Pro v2.1 - Testing Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        h1 { color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h2 { color: #764ba2; margin-top: 30px; }
+        .test-item {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .test-item label {
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .status.new { background: #e3f2fd; color: #1976d2; }
+        .status.fixed { background: #e8f5e9; color: #388e3c; }
+        .status.improved { background: #fff3e0; color: #f57c00; }
+        code { background: #f1f3f5; padding: 2px 6px; border-radius: 3px; color: #e74c3c; }
+        .success { background: #d4edda; padding: 12px; border-radius: 5px; border-left: 4px solid #28a745; margin: 20px 0; }
+        .warning { background: #fff3cd; padding: 12px; border-radius: 5px; border-left: 4px solid #ffc107; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Kanban Pro v2.1 - Testing Checklist</h1>
+    <p>Use this guide to verify all the board-native features are working correctly.</p>
+
+    <h2>🚀 Initial Setup Tests</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test1">
+        <label for="test1"><span class="status new">NEW</span> Open Miro board and click the Kanban Pro icon in sidebar</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test2">
+        <label for="test2"><span class="status fixed">FIXED</span> Sidebar panel opens and is scrollable (no content cut off)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test3">
+        <label for="test3"><span class="status fixed">FIXED</span> All buttons visible without horizontal scrolling</label>
+    </div>
+
+    <h2>👥 Native Board Members</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test4">
+        <label for="test4"><span class="status new">NEW</span> Assignee field is a dropdown (not text input)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test5">
+        <label for="test5"><span class="status new">NEW</span> Dropdown shows "Unassigned" and your Miro username with "(You)"</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test6">
+        <label for="test6"><span class="status new">NEW</span> Can select assignee from dropdown</label>
+    </div>
+
+    <h2>🎨 Setup Board Layout</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test7">
+        <label for="test7"><span class="status new">NEW</span> Button labeled "Setup Board Layout" (not "Initialize Board")</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test8">
+        <label for="test8"><span class="status new">NEW</span> Click button → Three large frames appear on board</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test9">
+        <label for="test9"><span class="status new">NEW</span> Frames are titled: "📋 TO DO", "⚡ IN PROGRESS", "✅ DONE"</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test10">
+        <label for="test10"><span class="status new">NEW</span> Frames are color-coded (blue, yellow, green)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test11">
+        <label for="test11"><span class="status new">NEW</span> Board zooms to show all three frames</label>
+    </div>
+
+    <h2>📝 Creating Cards (Board-Native Placement)</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test12">
+        <label for="test12"><span class="status new">NEW</span> Fill in task name: "Test Task 1"</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test13">
+        <label for="test13"><span class="status new">NEW</span> Select assignee from dropdown</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test14">
+        <label for="test14"><span class="status new">NEW</span> Set priority to "High" (🔴)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test15">
+        <label for="test15"><span class="status new">NEW</span> Keep status as "To Do"</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test16">
+        <label for="test16"><span class="status new">NEW</span> Click "Add to Board" → Card appears INSIDE "TO DO" frame</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test17">
+        <label for="test17"><span class="status new">NEW</span> Card title shows: 🔴 Test Task 1</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test18">
+        <label for="test18"><span class="status new">NEW</span> Card shows assignee name in fields</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test19">
+        <label for="test19"><span class="status new">NEW</span> Create another card with status "Done" → Appears in "DONE" frame</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test20">
+        <label for="test20"><span class="status new">NEW</span> Multiple cards in same frame stack vertically with spacing</label>
+    </div>
+
+    <h2>📊 Dashboard (Progress Tracking)</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test21">
+        <label for="test21"><span class="status improved">IMPROVED</span> Dashboard shows correct counts: To Do = 1, Done = 1</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test22">
+        <label for="test22"><span class="status improved">IMPROVED</span> Progress bar shows 50% (1 of 2 tasks done)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test23">
+        <label for="test23"><span class="status improved">IMPROVED</span> Progress bar is green and animated</label>
+    </div>
+
+    <h2>🔄 Bi-Directional Sync (Real-time)</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test24">
+        <label for="test24"><span class="status new">NEW</span> Manually drag a card from "TO DO" frame to "DONE" frame on board</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test25">
+        <label for="test25"><span class="status new">NEW</span> Wait 3-5 seconds → Dashboard updates automatically</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test26">
+        <label for="test26"><span class="status new">NEW</span> To Do count decreased, Done count increased</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test27">
+        <label for="test27"><span class="status new">NEW</span> Progress bar percentage updated without clicking refresh</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test28">
+        <label for="test28"><span class="status new">NEW</span> Click "Sync Now" button → Dashboard updates immediately</label>
+    </div>
+
+    <h2>🔀 Auto-Sort Feature</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test29">
+        <label for="test29"><span class="status improved">IMPROVED</span> Create cards in various positions outside frames</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test30">
+        <label for="test30"><span class="status improved">IMPROVED</span> Click "Auto-Sort" → All cards snap into correct frames</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test31">
+        <label for="test31"><span class="status improved">IMPROVED</span> Cards align vertically with proper spacing</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test32">
+        <label for="test32"><span class="status improved">IMPROVED</span> Alert shows "Sorted X cards" message</label>
+    </div>
+
+    <h2>🎨 UI/UX Improvements</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test33">
+        <label for="test33"><span class="status fixed">FIXED</span> Sidebar feels compact and native (not like a website)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test34">
+        <label for="test34"><span class="status fixed">FIXED</span> All text is legible with smaller font sizes</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test35">
+        <label for="test35"><span class="status fixed">FIXED</span> No drag-and-drop button visible (removed for board-native workflow)</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test36">
+        <label for="test36"><span class="status fixed">FIXED</span> Kanban Pro branding maintained with gradient header</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test37">
+        <label for="test37"><span class="status fixed">FIXED</span> Button loading states work (show spinner + "Processing...")</label>
+    </div>
+
+    <h2>🔍 Console Logs (Developer Check)</h2>
+
+    <div class="test-item">
+        <input type="checkbox" id="test38">
+        <label for="test38">Open browser console (F12) → No errors on page load</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test39">
+        <label for="test39">Console shows: "🚀 Initializing Kanban Pro v2.1 (Board-Native)..."</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test40">
+        <label for="test40">Console shows: "✅ Board polling started (3s interval)"</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test41">
+        <label for="test41">Console shows: "👥 Loading board members..."</label>
+    </div>
+
+    <div class="test-item">
+        <input type="checkbox" id="test42">
+        <label for="test42">No red errors during normal operation</label>
+    </div>
+
+    <div class="success">
+        <strong>✅ All Tests Passed?</strong><br>
+        Your Kanban Pro v2.1 is fully board-native and ready for production use!
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Troubleshooting:</strong><br>
+        • If assignee dropdown shows "Loading..." forever: Check browser console for errors<br>
+        • If cards don't appear in frames: Click "Setup Board Layout" first<br>
+        • If dashboard doesn't update: Check if polling is active (console logs)<br>
+        • If scroll doesn't work: Try refreshing the browser page
+    </div>
+
+    <h2>📈 Expected Behavior Summary</h2>
+    <ul>
+        <li><strong>Scrolling:</strong> Sidebar scrolls smoothly, all content accessible</li>
+        <li><strong>Board Members:</strong> Dropdown shows real Miro users automatically</li>
+        <li><strong>Card Placement:</strong> Cards automatically appear INSIDE correct frame</li>
+        <li><strong>Real-time Sync:</strong> Dashboard updates every 3 seconds without manual refresh</li>
+        <li><strong>Visual Style:</strong> Compact, native-feeling utility panel</li>
+        <li><strong>Persistence:</strong> Frame IDs saved to board data (survives refresh)</li>
+    </ul>
+
+    <hr style="margin: 40px 0;">
+    <p style="text-align: center; color: #6c757d;">
+        <strong>Kanban Pro v2.1 - Board-Native Edition</strong><br>
+        All critical fixes implemented ✅
+    </p>
+
+</body>
+</html>

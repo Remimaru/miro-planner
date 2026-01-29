@@ -12,31 +12,35 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            padding: 16px;
+            padding: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 420px;
+            max-width: 100%;
             margin: 0 auto;
+            padding-bottom: 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             color: white;
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            margin: 0 0 8px 0;
+            margin: 0 0 4px 0;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .header p {
-            font-size: 13px;
+            font-size: 11px;
             opacity: 0.9;
             margin: 0;
         }
@@ -44,28 +48,28 @@
         /* Progress Tracker Dashboard */
         .dashboard {
             background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
         }
 
         .dashboard-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .progress-bar-container {
             background: #e9ecef;
-            border-radius: 20px;
-            height: 32px;
+            border-radius: 16px;
+            height: 28px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             position: relative;
         }
 
@@ -85,29 +89,29 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .stat-card {
             background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 8px;
+            border-radius: 6px;
             text-align: center;
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: #333;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #6c757d;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .stat-card.todo .stat-value { color: #3b82f6; }
@@ -117,30 +121,30 @@
         /* Card Creator Section */
         .section {
             background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             color: #1f2937;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         label {
             display: block;
-            font-size: 13px;
-            margin-bottom: 8px;
+            font-size: 12px;
+            margin-bottom: 6px;
             color: #4b5563;
             font-weight: 500;
         }
@@ -148,10 +152,10 @@
         input[type="text"],
         select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
             transition: all 0.2s;
             background: white;
         }
@@ -168,8 +172,8 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 40px;
+            background-position: right 10px center;
+            padding-right: 35px;
         }
 
         /* Priority Badges */
@@ -202,17 +206,17 @@
         /* Buttons */
         button {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-primary {
@@ -233,8 +237,8 @@
         .btn-secondary {
             background: #f3f4f6;
             color: #374151;
-            margin-top: 8px;
-            border: 2px solid #e5e7eb;
+            margin-top: 6px;
+            border: 1px solid #e5e7eb;
         }
 
         .btn-secondary:hover {
@@ -257,8 +261,9 @@
             cursor: move;
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
-            margin-top: 8px;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            margin-top: 6px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            display: none;
         }
 
         .btn-draggable:hover {
@@ -273,14 +278,14 @@
         }
 
         .info-text {
-            font-size: 12px;
+            font-size: 11px;
             color: #6b7280;
-            margin-top: 8px;
-            line-height: 1.5;
-            padding: 8px;
+            margin-top: 6px;
+            line-height: 1.4;
+            padding: 6px;
             background: #f9fafb;
-            border-radius: 6px;
-            border-left: 3px solid #667eea;
+            border-radius: 4px;
+            border-left: 2px solid #667eea;
         }
 
         .button-group {
@@ -298,14 +303,15 @@
         /* Drag hint */
         .drag-hint {
             text-align: center;
-            padding: 12px;
+            padding: 8px;
             background: #fffbeb;
-            border: 2px dashed #fbbf24;
-            border-radius: 8px;
-            margin-top: 12px;
-            font-size: 12px;
+            border: 1px dashed #fbbf24;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 11px;
             color: #92400e;
             font-weight: 500;
+            display: none;
         }
 
         /* Loading state */
@@ -379,12 +385,9 @@
 
             <div class="input-group">
                 <label for="assignee">Assignee</label>
-                <input 
-                    type="text" 
-                    id="assignee" 
-                    placeholder="e.g., Sarah Chen"
-                    autocomplete="off"
-                />
+                <select id="assignee">
+                    <option value="">Loading board members...</option>
+                </select>
             </div>
 
             <div class="input-group">
@@ -413,14 +416,7 @@
                 <span>Add to Board</span>
             </button>
 
-            <button class="btn-draggable" id="dragTaskBtn" draggable="true">
-                <span>👆</span>
-                <span>Drag to Board</span>
-            </button>
 
-            <div class="drag-hint">
-                💡 Tip: Use "Drag to Board" to place the card exactly where you want it!
-            </div>
         </div>
 
         <div class="divider"></div>
@@ -431,23 +427,23 @@
                 🎨 Board Management
             </div>
 
-            <button class="btn-success" id="initBoardBtn">
+            <button class="btn-success" id="setupBoardBtn">
                 <span>🚀</span>
-                <span>Initialize Board</span>
+                <span>Setup Board Layout</span>
             </button>
-            <p class="info-text">Creates three organized columns: To Do, In Progress, and Done</p>
+            <p class="info-text">Creates three frames on the board: To Do, In Progress, and Done</p>
 
             <div class="button-group">
                 <button class="btn-secondary" id="autoSortBtn">
                     <span>🔄</span>
                     <span>Auto-Sort</span>
                 </button>
-                <button class="btn-secondary" id="refreshBtn">
-                    <span>📈</span>
-                    <span>Refresh Stats</span>
+                <button class="btn-secondary" id="syncBtn">
+                    <span>🔄</span>
+                    <span>Sync Now</span>
                 </button>
             </div>
-            <p class="info-text">Auto-Sort snaps all cards into their correct columns based on status</p>
+            <p class="info-text">Auto-Sort organizes cards, Sync updates dashboard from board changes</p>
         </div>
     </div>
 
