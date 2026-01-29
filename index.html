@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miro Project Planner</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 6px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4262ff;
+        }
+
+        .status-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .status-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .status-option:hover {
+            background: #f0f0f0;
+        }
+
+        .status-option.selected {
+            border-color: #4262ff;
+            background: #e8eeff;
+            color: #4262ff;
+        }
+
+        .status-option.todo {
+            border-color: #2d9bf0;
+        }
+
+        .status-option.todo.selected {
+            background: #e3f2fd;
+            border-color: #2d9bf0;
+            color: #2d9bf0;
+        }
+
+        .status-option.done {
+            border-color: #2ea44f;
+        }
+
+        .status-option.done.selected {
+            background: #e6f7ed;
+            border-color: #2ea44f;
+            color: #2ea44f;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #4262ff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3651dd;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 20px 0;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .status-indicator.todo {
+            background: #2d9bf0;
+        }
+
+        .status-indicator.done {
+            background: #2ea44f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Project Planner</h1>
+
+        <div class="section">
+            <div class="section-title">Add New Task</div>
+            
+            <div class="input-group">
+                <label for="taskName">Task Name</label>
+                <input 
+                    type="text" 
+                    id="taskName" 
+                    placeholder="Enter task description..."
+                    autocomplete="off"
+                />
+            </div>
+
+            <div class="input-group">
+                <label>Status</label>
+                <div class="status-selector">
+                    <div class="status-option todo selected" data-status="todo">
+                        <span class="status-indicator todo"></span>
+                        To Do
+                    </div>
+                    <div class="status-option done" data-status="done">
+                        <span class="status-indicator done"></span>
+                        Done
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="addTaskBtn">Add Task to Board</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <div class="section-title">Organize Board</div>
+            <button class="btn-secondary" id="groupByStatusBtn">📊 Group by Status</button>
+            <p class="info-text">This will organize all tasks into neat columns: To Do and Done</p>
+        </div>
+    </div>
+
+    <script src="https://miro.com/app/static/sdk/v2/miro.js"></script>
+    <script src="src/index.js"></script>
+</body>
+</html>
