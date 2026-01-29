@@ -1,0 +1,66 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor Directories and Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Node Modules (if you add any build tools later)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build Output
+dist/
+build/
+*.min.js
+*.min.css
+
+# Miro App Credentials (DO NOT COMMIT)
+.miro-credentials
+app-credentials.json
+oauth-token.txt
+
+# Backup Files
+*.bak
+*.backup
+*_backup.*
+
+# Test Files
+test/
+tests/
+*.test.js
+*.spec.js
+coverage/

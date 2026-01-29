@@ -3,230 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miro Project Planner</title>
+    <title>Professional Kanban Planner</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
         }
 
-        h1 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #1a1a1a;
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            color: white;
         }
 
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Progress Tracker Dashboard */
+        .dashboard {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .dashboard-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 20px;
+            height: 32px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card.todo .stat-value { color: #3b82f6; }
+        .stat-card.progress .stat-value { color: #f59e0b; }
+        .stat-card.done .stat-value { color: #10b981; }
+
+        /* Card Creator Section */
         .section {
             background: white;
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 12px;
-            color: #333;
+            margin-bottom: 16px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .input-group {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
-            font-size: 12px;
-            margin-bottom: 6px;
-            color: #666;
-            font-weight: 500;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #4262ff;
-        }
-
-        .status-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .status-option {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            background: white;
-            cursor: pointer;
             font-size: 13px;
+            margin-bottom: 8px;
+            color: #4b5563;
             font-weight: 500;
-            text-align: center;
-            transition: all 0.2s;
         }
 
-        .status-option:hover {
-            background: #f0f0f0;
-        }
-
-        .status-option.selected {
-            border-color: #4262ff;
-            background: #e8eeff;
-            color: #4262ff;
-        }
-
-        .status-option.todo {
-            border-color: #2d9bf0;
-        }
-
-        .status-option.todo.selected {
-            background: #e3f2fd;
-            border-color: #2d9bf0;
-            color: #2d9bf0;
-        }
-
-        .status-option.done {
-            border-color: #2ea44f;
-        }
-
-        .status-option.done.selected {
-            background: #e6f7ed;
-            border-color: #2ea44f;
-            color: #2ea44f;
-        }
-
-        button {
+        input[type="text"],
+        select {
             width: 100%;
             padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        /* Priority Badges */
+        .priority-preview {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+
+        .priority-preview.high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-preview.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-preview.low {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 14px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-primary {
-            background: #4262ff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .btn-primary:hover {
-            background: #3651dd;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
         }
 
         .btn-primary:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+            background: #f3f4f6;
+            color: #374151;
             margin-top: 8px;
+            border: 2px solid #e5e7eb;
         }
 
         .btn-secondary:hover {
-            background: #e0e0e0;
+            background: #e5e7eb;
+            border-color: #d1d5db;
         }
 
-        .btn-secondary:active {
-            transform: scale(0.98);
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-draggable {
+            cursor: move;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-draggable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
         }
 
         .divider {
-            height: 1px;
-            background: #e0e0e0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
             margin: 20px 0;
         }
 
         .info-text {
             font-size: 12px;
-            color: #666;
+            color: #6b7280;
             margin-top: 8px;
-            line-height: 1.4;
+            line-height: 1.5;
+            padding: 8px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
         }
 
-        .status-indicator {
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .button-group button {
+            font-size: 13px;
+            padding: 10px;
+        }
+
+        /* Drag hint */
+        .drag-hint {
+            text-align: center;
+            padding: 12px;
+            background: #fffbeb;
+            border: 2px dashed #fbbf24;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
             border-radius: 50%;
-            margin-right: 6px;
+            animation: spin 0.6s linear infinite;
         }
 
-        .status-indicator.todo {
-            background: #2d9bf0;
-        }
-
-        .status-indicator.done {
-            background: #2ea44f;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📋 Project Planner</h1>
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Kanban Pro</h1>
+            <p>Professional Project Management for Miro</p>
+        </div>
 
+        <!-- Progress Tracker Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <div class="dashboard-title">
+                📊 Project Progress
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card todo">
+                    <div class="stat-value" id="todoCount">0</div>
+                    <div class="stat-label">To Do</div>
+                </div>
+                <div class="stat-card progress">
+                    <div class="stat-value" id="progressCount">0</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-card done">
+                    <div class="stat-value" id="doneCount">0</div>
+                    <div class="stat-label">Done</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Creator -->
         <div class="section">
-            <div class="section-title">Add New Task</div>
+            <div class="section-title">
+                ✨ Create Task Card
+            </div>
             
             <div class="input-group">
                 <label for="taskName">Task Name</label>
                 <input 
                     type="text" 
                     id="taskName" 
-                    placeholder="Enter task description..."
+                    placeholder="e.g., Design landing page mockups"
                     autocomplete="off"
                 />
             </div>
 
             <div class="input-group">
-                <label>Status</label>
-                <div class="status-selector">
-                    <div class="status-option todo selected" data-status="todo">
-                        <span class="status-indicator todo"></span>
-                        To Do
-                    </div>
-                    <div class="status-option done" data-status="done">
-                        <span class="status-indicator done"></span>
-                        Done
-                    </div>
-                </div>
+                <label for="assignee">Assignee</label>
+                <input 
+                    type="text" 
+                    id="assignee" 
+                    placeholder="e.g., Sarah Chen"
+                    autocomplete="off"
+                />
             </div>
 
-            <button class="btn-primary" id="addTaskBtn">Add Task to Board</button>
+            <div class="input-group">
+                <label for="priority">
+                    Priority
+                    <span class="priority-preview" id="priorityPreview">Medium</span>
+                </label>
+                <select id="priority">
+                    <option value="high">🔴 High Priority</option>
+                    <option value="medium" selected>🟡 Medium Priority</option>
+                    <option value="low">🔵 Low Priority</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="status">Status</label>
+                <select id="status">
+                    <option value="todo" selected>📋 To Do</option>
+                    <option value="progress">⚡ In Progress</option>
+                    <option value="done">✅ Done</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" id="addTaskBtn">
+                <span>➕</span>
+                <span>Add to Board</span>
+            </button>
+
+            <button class="btn-draggable" id="dragTaskBtn" draggable="true">
+                <span>👆</span>
+                <span>Drag to Board</span>
+            </button>
+
+            <div class="drag-hint">
+                💡 Tip: Use "Drag to Board" to place the card exactly where you want it!
+            </div>
         </div>
 
         <div class="divider"></div>
 
+        <!-- Board Management -->
         <div class="section">
-            <div class="section-title">Organize Board</div>
-            <button class="btn-secondary" id="groupByStatusBtn">📊 Group by Status</button>
-            <p class="info-text">This will organize all tasks into neat columns: To Do and Done</p>
+            <div class="section-title">
+                🎨 Board Management
+            </div>
+
+            <button class="btn-success" id="initBoardBtn">
+                <span>🚀</span>
+                <span>Initialize Board</span>
+            </button>
+            <p class="info-text">Creates three organized columns: To Do, In Progress, and Done</p>
+
+            <div class="button-group">
+                <button class="btn-secondary" id="autoSortBtn">
+                    <span>🔄</span>
+                    <span>Auto-Sort</span>
+                </button>
+                <button class="btn-secondary" id="refreshBtn">
+                    <span>📈</span>
+                    <span>Refresh Stats</span>
+                </button>
+            </div>
+            <p class="info-text">Auto-Sort snaps all cards into their correct columns based on status</p>
         </div>
     </div>
 
     <script src="https://miro.com/app/static/sdk/v2/miro.js"></script>
-    <script src="src/index.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

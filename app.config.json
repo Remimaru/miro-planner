@@ -1,0 +1,107 @@
+{
+  "name": "Kanban Pro",
+  "version": "2.0.0",
+  "description": "Professional Kanban/Project Planner for Miro using Web SDK v2.0",
+  "author": "Senior Frontend Engineer",
+  "miroApp": {
+    "sdkVersion": "2.0",
+    "requiredPermissions": [
+      "boards:read",
+      "boards:write"
+    ],
+    "appType": "web-plugin",
+    "entryPoint": "index.html"
+  },
+  "features": [
+    "Professional App Cards with metadata",
+    "Three-column Kanban board (To Do, In Progress, Done)",
+    "Drag-and-drop from sidebar to board",
+    "Auto-sorting algorithm",
+    "Real-time progress tracking dashboard",
+    "Priority levels (High, Medium, Low)",
+    "Assignee tracking"
+  ],
+  "techStack": {
+    "frontend": "Vanilla JavaScript (ES6+)",
+    "styling": "Pure CSS3 with gradients and animations",
+    "sdk": "Miro Web SDK v2.0",
+    "frameworks": "None (framework-free)",
+    "hosting": "Static hosting (GitHub Pages, Netlify, Vercel, etc.)"
+  },
+  "files": {
+    "index.html": "Sidebar UI with form and dashboard",
+    "app.js": "Core Miro SDK logic and functionality",
+    "README.md": "Comprehensive documentation"
+  },
+  "deployment": {
+    "localDevelopment": "http://localhost:8000",
+    "production": "https://yourusername.github.io/kanban-pro/",
+    "commands": {
+      "pythonServer": "python -m http.server 8000",
+      "nodeServer": "npx http-server -p 8000",
+      "phpServer": "php -S localhost:8000"
+    }
+  },
+  "configuration": {
+    "columns": {
+      "todo": {
+        "title": "TO DO",
+        "color": "#e0f2fe",
+        "position": -800
+      },
+      "progress": {
+        "title": "IN PROGRESS",
+        "color": "#fef3c7",
+        "position": -300
+      },
+      "done": {
+        "title": "DONE",
+        "color": "#d1fae5",
+        "position": 200
+      }
+    },
+    "priorities": {
+      "high": {
+        "color": "#fecaca",
+        "emoji": "🔴"
+      },
+      "medium": {
+        "color": "#fde68a",
+        "emoji": "🟡"
+      },
+      "low": {
+        "color": "#bfdbfe",
+        "emoji": "🔵"
+      }
+    },
+    "cardDefaults": {
+      "width": 300,
+      "spacing": 20,
+      "startY": 150
+    }
+  },
+  "browser": {
+    "supported": [
+      "Chrome 90+",
+      "Firefox 88+",
+      "Safari 14+",
+      "Edge 90+"
+    ],
+    "required": [
+      "JavaScript ES6+",
+      "CSS Grid",
+      "Drag and Drop API"
+    ]
+  },
+  "keywords": [
+    "miro",
+    "kanban",
+    "project-management",
+    "web-sdk",
+    "vanilla-javascript",
+    "app-cards",
+    "agile",
+    "productivity"
+  ],
+  "license": "MIT"
+}
