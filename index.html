@@ -3,315 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Kanban Planner</title>
+    <title>Board Planner</title>
     <style>
         * {
             box-sizing: border-box;
         }
 
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
             height: 100vh;
-            max-height: 100vh;
+        }
+
+        .panel-container {
+            flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding-bottom: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 16px;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0 0 4px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .header p {
-            font-size: 11px;
-            opacity: 0.9;
-            margin: 0;
-        }
-
-        /* Progress Tracker Dashboard */
+        /* Dashboard Stats */
         .dashboard {
-            background: white;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        }
-
-        .dashboard-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .progress-bar-container {
-            background: #e9ecef;
-            border-radius: 16px;
-            height: 28px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .stat-card {
             background: #f8f9fa;
-            padding: 8px;
-            border-radius: 6px;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .stat-item {
+            flex: 1;
             text-align: center;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
         }
 
         .stat-value {
             font-size: 20px;
             font-weight: 700;
             color: #333;
-            margin-bottom: 2px;
+            display: block;
         }
 
         .stat-label {
             font-size: 10px;
             color: #6c757d;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            margin-top: 2px;
         }
 
-        .stat-card.todo .stat-value { color: #3b82f6; }
-        .stat-card.progress .stat-value { color: #f59e0b; }
-        .stat-card.done .stat-value { color: #10b981; }
+        .stat-item.todo .stat-value { color: #3b82f6; }
+        .stat-item.progress .stat-value { color: #f59e0b; }
+        .stat-item.done .stat-value { color: #10b981; }
 
-        /* Card Creator Section */
-        .section {
-            background: white;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        }
-
-        .section-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1f2937;
+        /* Action Section */
+        .action-section {
             display: flex;
-            align-items: center;
-            gap: 6px;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .input-group {
-            margin-bottom: 12px;
+        .section-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 8px 0;
         }
 
-        label {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 6px;
-            color: #4b5563;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 13px;
-            transition: all 0.2s;
-            background: white;
-        }
-
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 35px;
-        }
-
-        /* Priority Badges */
-        .priority-preview {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
+        .hint-text {
             font-size: 11px;
+            color: #6c757d;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #4f46e5;
+            margin-top: 4px;
+        }
+
+        .draggable-item {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: move;
+            text-align: center;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-left: 8px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s;
+            user-select: none;
         }
 
-        .priority-preview.high {
-            background: #fee2e2;
-            color: #dc2626;
+        .draggable-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
         }
 
-        .priority-preview.medium {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .priority-preview.low {
-            background: #dbeafe;
-            color: #2563eb;
+        .draggable-item:active {
+            transform: scale(0.98);
         }
 
         /* Buttons */
-        button {
+        .btn {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4f46e5;
             color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
         }
 
         .btn-secondary {
             background: #f3f4f6;
             color: #374151;
-            margin-top: 6px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #d1d5db;
         }
 
-        .btn-secondary:hover {
-            background: #e5e7eb;
-            border-color: #d1d5db;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        .btn-setup {
+            background: #10b981;
             color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
 
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
-        }
-
-        .btn-draggable {
-            cursor: move;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            margin-top: 6px;
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-            display: none;
-        }
-
-        .btn-draggable:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.5);
-        }
-
-        .divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
-            margin: 20px 0;
-        }
-
-        .info-text {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 6px;
-            line-height: 1.4;
-            padding: 6px;
-            background: #f9fafb;
-            border-radius: 4px;
-            border-left: 2px solid #667eea;
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .button-group button {
-            font-size: 13px;
-            padding: 10px;
-        }
-
-        /* Drag hint */
-        .drag-hint {
-            text-align: center;
-            padding: 8px;
-            background: #fffbeb;
-            border: 1px dashed #fbbf24;
-            border-radius: 6px;
-            margin-top: 8px;
-            font-size: 11px;
-            color: #92400e;
-            font-weight: 500;
-            display: none;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Loading state */
@@ -336,114 +191,54 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🎯 Kanban Pro</h1>
-            <p>Professional Project Management for Miro</p>
-        </div>
-
-        <!-- Progress Tracker Dashboard -->
-        <div class="dashboard" id="dashboard">
-            <div class="dashboard-title">
-                📊 Project Progress
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="progressBar">0%</div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card todo">
-                    <div class="stat-value" id="todoCount">0</div>
+    <div class="panel-container">
+        <!-- Quick Stats Dashboard -->
+        <div class="dashboard">
+            <div class="stats-row">
+                <div class="stat-item todo">
+                    <span class="stat-value" id="todoCount">0</span>
                     <div class="stat-label">To Do</div>
                 </div>
-                <div class="stat-card progress">
-                    <div class="stat-value" id="progressCount">0</div>
-                    <div class="stat-label">In Progress</div>
+                <div class="stat-item progress">
+                    <span class="stat-value" id="progressCount">0</span>
+                    <div class="stat-label">Progress</div>
                 </div>
-                <div class="stat-card done">
-                    <div class="stat-value" id="doneCount">0</div>
+                <div class="stat-item done">
+                    <span class="stat-value" id="doneCount">0</span>
                     <div class="stat-label">Done</div>
                 </div>
             </div>
         </div>
 
-        <!-- Card Creator -->
-        <div class="section">
-            <div class="section-title">
-                ✨ Create Task Card
-            </div>
+        <!-- Main Actions -->
+        <div class="action-section">
+            <button class="btn btn-primary" id="newTaskBtn">
+                ➕ New Task
+            </button>
             
-            <div class="input-group">
-                <label for="taskName">Task Name</label>
-                <input 
-                    type="text" 
-                    id="taskName" 
-                    placeholder="e.g., Design landing page mockups"
-                    autocomplete="off"
-                />
-            </div>
-
-            <div class="input-group">
-                <label for="assignee">Assignee</label>
-                <select id="assignee">
-                    <option value="">Loading board members...</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="priority">
-                    Priority
-                    <span class="priority-preview" id="priorityPreview">Medium</span>
-                </label>
-                <select id="priority">
-                    <option value="high">🔴 High Priority</option>
-                    <option value="medium" selected>🟡 Medium Priority</option>
-                    <option value="low">🔵 Low Priority</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="status">Status</label>
-                <select id="status">
-                    <option value="todo" selected>📋 To Do</option>
-                    <option value="progress">⚡ In Progress</option>
-                    <option value="done">✅ Done</option>
-                </select>
-            </div>
-
-            <button class="btn-primary" id="addTaskBtn">
-                <span>➕</span>
-                <span>Add to Board</span>
+            <button class="btn btn-setup" id="setupBoardBtn">
+                ⚙️ Setup Board
             </button>
 
+            <div class="section-divider"></div>
 
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Board Management -->
-        <div class="section">
-            <div class="section-title">
-                🎨 Board Management
+            <!-- Drag and Drop Area -->
+            <div 
+                class="draggable-item" 
+                id="taskTemplate" 
+                draggable="true"
+            >
+                👆 Drag to Board
+            </div>
+            <div class="hint-text">
+                💡 Click a card on the board to edit it
             </div>
 
-            <button class="btn-success" id="setupBoardBtn">
-                <span>🚀</span>
-                <span>Setup Board Layout</span>
+            <div class="section-divider"></div>
+
+            <button class="btn btn-secondary" id="autoSortBtn">
+                🔄 Auto-Sort Cards
             </button>
-            <p class="info-text">Creates three frames on the board: To Do, In Progress, and Done</p>
-
-            <div class="button-group">
-                <button class="btn-secondary" id="autoSortBtn">
-                    <span>🔄</span>
-                    <span>Auto-Sort</span>
-                </button>
-                <button class="btn-secondary" id="syncBtn">
-                    <span>🔄</span>
-                    <span>Sync Now</span>
-                </button>
-            </div>
-            <p class="info-text">Auto-Sort organizes cards, Sync updates dashboard from board changes</p>
         </div>
     </div>
 

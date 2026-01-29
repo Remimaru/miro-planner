@@ -1,379 +1,300 @@
-# 🎯 Kanban Pro - Professional Miro Project Planner
+# 🎯 Board-Centric Task Planner for Miro
 
-A production-ready Kanban board application built with **Miro Web SDK v2.0**. Features professional App Cards, automatic frame-based organization, drag-and-drop support, and real-time progress tracking.
+A modern, native-feeling task management app for Miro boards with **board-first interaction**, modal forms, and drag-and-drop functionality.
 
-Built with **pure vanilla JavaScript** - no frameworks required.
+## ✨ Key Features
 
----
+### 🖱️ Board-First Interaction
+- **Click any task card on the board to edit it** - no need to find it in the sidebar
+- All editing happens in clean modal dialogs
+- Sidebar is minimal with just essential actions
 
-## ✨ Features
+### 📝 Modal-Based Forms
+- Task creation and editing opens in centered modal windows
+- Clean, focused interface without cluttering the sidebar
+- Form includes: Task name, Assignee, Priority, Status
 
-### 🎴 Professional App Cards
-- **Rich task cards** with metadata (not basic sticky notes)
-- **Task details**: Name, Assignee, Priority (High/Med/Low), Status
-- **Visual indicators**: Color-coded priority badges
-- **Structured data**: Metadata stored in card fields for filtering
+### 🎯 Drag and Drop
+- **Drag the "👆 Drag to Board" template** from sidebar to board
+- Drop anywhere in a column to create a new task
+- Task form opens automatically with correct status pre-selected
 
-### 📊 Smart Kanban Board
-- **Three organized columns**: To Do, In Progress, Done
-- **Frame-based layout**: Uses Miro Frames for visual organization
-- **Auto-initialization**: One-click board setup with colored columns
-- **Professional appearance**: Clean, color-coded columns
+### 🎨 Professional Kanban
+- **3 columns:** 📋 TO DO, ⚡ IN PROGRESS, ✅ DONE
+- Uses Miro's native **App Cards** (not sticky notes)
+- Uses Miro's native **Frames** for columns
+- Color-coded by priority: 🔴 High, 🟡 Medium, 🔵 Low
 
-### 🚀 Auto-Sorting Intelligence
-- **Smart positioning**: Automatically snaps cards into correct columns
-- **Status detection**: Reads card metadata to determine placement
-- **Batch organization**: Sorts all cards at once
-- **Maintains order**: Vertical stacking with proper spacing
+### 🔄 Real-Time Sync
+- **Live dashboard** shows task counts (updates every 3 seconds)
+- Move cards between frames on the board → dashboard updates automatically
+- Bi-directional synchronization
 
-### 📈 Real-Time Progress Dashboard
-- **Visual progress bar**: See completion percentage at a glance
-- **Task statistics**: Count of tasks in each column
-- **Live updates**: Refresh stats with one click
-- **Color-coded metrics**: Easy to read at a glance
-
-### 🖱️ Drag & Drop Support
-- **Direct placement**: Drag tasks from sidebar to board
-- **Precise positioning**: Place cards exactly where you want them
-- **Instant creation**: Cards appear immediately on drop
-- **Intuitive workflow**: Natural interaction pattern
+### ⚡ Smart Auto-Sort
+- Click "Auto-Sort" to organize cards by priority
+- High priority (🔴) cards move to top
+- Cards arranged in clean grid layout
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Local Development Setup
+### 1. Setup Board
+1. Open the Miro board
+2. Click the app icon in the toolbar
+3. Click **"⚙️ Setup Board"** button
+4. Three frames will be created automatically
 
-```powershell
-# Clone or download this repository
-cd miro-planner
+### 2. Create Tasks
 
-# Start a local web server (choose one):
+**Method 1: New Task Button**
+- Click **"➕ New Task"** in sidebar
+- Fill out the form in the modal
+- Click "Create Task"
 
-# Option A: Python 3
-python -m http.server 8000
+**Method 2: Drag and Drop**
+- Drag the **"👆 Drag to Board"** template from sidebar
+- Drop it in any column (TO DO, IN PROGRESS, or DONE)
+- Fill out the form in the modal
+- Click "Create Task"
 
-# Option B: Node.js
-npx http-server -p 8000
+### 3. Edit Tasks
+- **Simply click any task card on the board**
+- Modal opens with current task data
+- Make changes and click "Save Changes"
 
-# Option C: PHP
-php -S localhost:8000
-```
-
-Your app will be available at `http://localhost:8000`
-
-### 2. Create Miro App
-
-1. Go to [Miro Developer Portal](https://miro.com/app/settings/user-profile/apps)
-2. Click **"Create new app"**
-3. Fill in app details:
-   - **App Name**: Kanban Pro
-   - **Description**: Professional project management for Miro
-
-### 3. Configure Permissions
-
-Set the following permissions (required):
-- ✅ `boards:read` - Read board content
-- ✅ `boards:write` - Create and update cards/frames
-
-### 4. Set App URLs
-
-- **App URL**: `http://localhost:8000/`
-- **Web-plugin URL**: `http://localhost:8000/`
-
-### 5. Install & Use
-
-1. Click **"Install app and get OAuth token"**
-2. Select your team and authorize
-3. Open any Miro board
-4. Click the **Kanban Pro icon** in the left sidebar
-5. Start creating tasks!
+### 4. Organize
+- Click **"Auto-Sort"** to organize cards by priority
+- Cards are arranged automatically in a clean grid
 
 ---
 
-## 📖 User Guide
+## 📊 Dashboard Stats
 
-### Initial Board Setup
+The sidebar shows live statistics:
+- **📋 TO DO:** Number of tasks in To Do column
+- **⚡ IN PROGRESS:** Number of tasks in progress
+- **✅ DONE:** Number of completed tasks
+- **📈 TOTAL:** Total tasks across all columns
 
-1. **Open the app** by clicking its icon in the sidebar
-2. **Click "Initialize Board"** to create three columns:
-   - 📋 To Do (Blue)
-   - ⚡ In Progress (Yellow)
-   - ✅ Done (Green)
-3. Board is ready for tasks!
-
-### Creating Tasks
-
-**Method 1: Add to Board**
-1. Enter **Task Name** (e.g., "Design homepage mockup")
-2. Enter **Assignee** (e.g., "Sarah Chen")
-3. Select **Priority**: High 🔴, Medium 🟡, or Low 🔵
-4. Select **Status**: To Do, In Progress, or Done
-5. Click **"Add to Board"**
-
-**Method 2: Drag & Drop**
-1. Fill in task details
-2. **Click and hold** the "Drag to Board" button
-3. **Drag** onto the board
-4. **Drop** at your desired position
-
-### Organizing Cards
-
-- **Auto-Sort**: Click "Auto-Sort" to organize all cards into their correct columns
-- **Manual Move**: Drag cards between columns manually
-- **Status Update**: Edit card descriptions to change status
-
-### Progress Tracking
-
-- **Dashboard** shows:
-  - Overall completion percentage
-  - Count of tasks in each column
-- **Refresh Stats** button updates metrics
-- **Color-coded** for quick scanning
+Updates automatically every 3 seconds.
 
 ---
 
-## 📁 Project Structure
+## 🎨 Priority System
 
-```
-miro-planner/
-├── index.html          # Sidebar UI (card creator + dashboard)
-├── app.js              # Miro SDK logic (core functionality)
-└── README.md           # This file
-```
+Tasks are color-coded by priority:
 
-### `index.html`
-- Responsive sidebar interface
-- Task creation form with validation
-- Real-time progress dashboard
-- Gradient design with smooth animations
-- Drag-and-drop button with visual feedback
-
-### `app.js`
-- **Configuration**: Column layout, priority styles
-- **Initialization**: SDK setup and event registration
-- **Card Management**: Create, update, position App Cards
-- **Frame Management**: Initialize and manage column frames
-- **Auto-Sorting**: Intelligent card positioning algorithm
-- **Progress Tracking**: Real-time statistics calculation
-- **Drag & Drop**: Handler for sidebar-to-board dragging
+| Priority | Emoji | Card Color | When to Use |
+|----------|-------|------------|-------------|
+| **High** | 🔴 | Red | Urgent, critical tasks |
+| **Medium** | 🟡 | Yellow | Standard priority |
+| **Low** | 🔵 | Blue | Nice to have, low urgency |
 
 ---
 
-## 🛠️ Technical Details
+## 🔧 Technical Details
 
-### Technologies
-- **Miro Web SDK v2.0** - Official Miro integration API
-- **Vanilla JavaScript** - No frameworks (React/Vue/etc)
-- **Modern CSS3** - Gradients, animations, flexbox/grid
-- **HTML5** - Semantic markup
+### Architecture
+- **SDK:** Miro Web SDK v2.0
+- **Language:** Vanilla JavaScript (no frameworks)
+- **UI:** Native HTML/CSS with flexbox layout
+- **Storage:** Miro's `setAppData()` / `getAppData()` APIs
 
-### Key Miro SDK Methods Used
+### Components
 
-```javascript
-// Create professional app cards
-miro.board.createAppCard({
-    title, description, x, y, width,
-    style, fields
-})
+#### Main Files
+- `index.html` - Sidebar panel UI (minimal, board-centric design)
+- `app.js` - Core logic (event handlers, board management)
+- `modal.html` - Task creation/editing form
+- `modal.js` - Modal form handler
 
-// Create visual columns
-miro.board.createFrame({
-    title, x, y, width, height,
-    style: { fillColor }
-})
+#### Key Miro SDK Features Used
+- **App Cards:** Professional task cards with metadata
+- **Frames:** Kanban columns with automatic child management
+- **Event Handlers:**
+  - `app_card:click` - Detect card clicks for editing
+  - `drop` - Handle drag-and-drop from sidebar
+  - `icon:click` - Open sidebar panel
+- **Modals:** `miro.board.ui.openModal()` for forms
+- **Board Data:** Persistent storage for frame references
 
-// Drag and drop support
-miro.board.ui.on('drop', async ({ x, y }) => {
-    // Handle drop event
-})
+### Card Structure
+Each task card contains:
+- **Title:** Priority emoji + task name (e.g., "🔴 Fix login bug")
+- **Description:** Priority, Status, Assignee (HTML formatted)
+- **Style:** Color theme based on priority
+- **Dimensions:** 280px width, automatic height
 
-// Update card positions
-miro.board.update({
-    id, x, y
-})
+### Frame Layout
+- **Width:** 500px per frame
+- **Height:** 2000px (accommodates many cards)
+- **Spacing:** 550px horizontal spacing between frames
+- **Colors:**
+  - TO DO: Light blue (#dbeafe)
+  - IN PROGRESS: Light yellow (#fef3c7)
+  - DONE: Light green (#d1fae5)
 
-// Query board items
-miro.board.get() // Returns all items
-```
-
-### Architecture Patterns
-
-- **State Management**: Cached frame references for performance
-- **Event-Driven**: Reactive UI updates via event listeners
-- **Async/Await**: Clean asynchronous code handling
-- **Error Handling**: Try-catch blocks with user-friendly messages
-- **Modular Functions**: Single-responsibility principle
-- **Extensive Comments**: Self-documenting code
-
----
-
-## 🎨 Customization Guide
-
-### Modify Column Positions
-
-Edit the `COLUMNS` object in [app.js](app.js):
-
-```javascript
-const COLUMNS = {
-    todo: {
-        title: '📋 TO DO',
-        x: -800,        // Left position
-        y: 0,           // Vertical center
-        width: 450,     // Frame width
-        height: 1200,   // Frame height
-        color: '#e0f2fe' // Light blue
-    },
-    // ... more columns
-};
-```
-
-### Change Priority Colors
-
-Edit `PRIORITY_STYLES` in [app.js](app.js):
-
-```javascript
-const PRIORITY_STYLES = {
-    high: {
-        emoji: '🔴',
-        color: '#fecaca',  // Light red
-        label: 'High'
-    },
-    // ... more priorities
-};
-```
-
-### Adjust Card Spacing
-
-Modify layout constants in [app.js](app.js):
-
-```javascript
-const CARD_WIDTH = 300;        // Card width in pixels
-const CARD_SPACING_Y = 20;     // Vertical gap between cards
-const CARD_PADDING_X = 75;     // Horizontal padding from frame
-const CARD_START_Y = 150;      // Starting Y position
-```
-
-### Customize UI Colors
-
-Edit CSS variables in [index.html](index.html):
-
-```css
-/* Gradient backgrounds */
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-/* Button colors */
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-```
+### Card Positioning
+- **Grid Layout:** 4 cards per column, then start new column
+- **Top Margin:** 100px below frame title
+- **Side Margin:** 30px from frame edges
+- **Card Spacing:** 25px between cards
+- **Auto-positioning:** New cards automatically placed in next available slot
 
 ---
 
-## 🚢 Deployment
+## 🎯 Usage Tips
 
-### GitHub Pages (Free Hosting)
+### Best Practices
+1. **Setup Board First:** Always click "Setup Board" before creating tasks
+2. **Click Cards to Edit:** Don't search in sidebar - just click the card on the board
+3. **Use Drag-and-Drop:** Fastest way to create tasks directly where you want them
+4. **Auto-Sort Regularly:** Keep board organized by clicking Auto-Sort
+5. **Priority Colors:** Use colors to quickly scan board for urgent tasks
 
-1. **Push to GitHub**:
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/yourusername/kanban-pro.git
-git push -u origin main
+### Workflow Example
 ```
-
-2. **Enable GitHub Pages**:
-   - Go to repository **Settings** → **Pages**
-   - Source: **Deploy from branch**
-   - Branch: **main** / **root**
-   - Click **Save**
-
-3. **Update Miro App URLs**:
-   - App URL: `https://yourusername.github.io/kanban-pro/`
-   - Web-plugin URL: `https://yourusername.github.io/kanban-pro/`
-
-### Other Hosting Options
-
-- **Netlify**: Drag and drop folder → Get instant URL
-- **Vercel**: Connect GitHub repo → Auto-deploy
-- **Firebase Hosting**: `firebase init` → `firebase deploy`
-- **AWS S3**: Static website hosting
+1. Click "Setup Board" (first time only)
+2. Drag template → Drop in TO DO column → Create task "Design login page"
+3. Drag template → Drop in TO DO column → Create task "Setup database"
+4. Click "Auto-Sort" to organize
+5. Click a task card → Change status to "In Progress" → Save
+6. Task automatically moves to IN PROGRESS column
+```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Cards not appearing?
-- **Check**: Is the board initialized? Click "Initialize Board" first
-- **Verify**: App permissions include `boards:write`
-- **Test**: Open browser console (F12) for error messages
+### Cards Not Appearing
+- **Solution:** Click "Setup Board" to create the frames first
+- Frames must exist before cards can be created
 
-### Drag & drop not working?
-- **Browser**: Ensure you're using a modern browser (Chrome, Firefox, Edge)
-- **HTTPS**: Drag & drop requires secure context (localhost or HTTPS)
-- **Permissions**: Check `boards:write` permission is granted
+### Can't Scroll Sidebar
+- **Solution:** This is fixed in v3.0 with flexbox layout
+- Body has `height: 100vh; display: flex; flex-direction: column;`
+- Container has `flex: 1; overflow-y: auto;`
 
-### Dashboard shows 0% despite having cards?
-- **Click**: "Refresh Stats" button to update
-- **Check**: Are cards created by this app? (App Cards, not sticky notes)
-- **Verify**: Card descriptions contain status metadata
+### Modal Not Opening
+- **Solution:** Check browser console for errors
+- Ensure `modal.html` and `modal.js` are in the same directory as `index.html`
 
-### Auto-sort puts cards in wrong columns?
-- **Status metadata**: Ensure cards have proper status in description
-- **Re-initialize**: Try clicking "Initialize Board" again
-- **Manual fix**: Edit card descriptions to include correct status
+### Cards Not Moving to Correct Frame
+- **Solution:** Frames are saved by ID - if deleted, click "Setup Board" again
 
----
-
-## 📝 Code Quality
-
-- ✅ **Extensively commented** - Every function documented
-- ✅ **Error handling** - Try-catch blocks throughout
-- ✅ **Type safety** - Careful null/undefined checks
-- ✅ **Clean code** - Follows best practices
-- ✅ **Modular design** - Single-responsibility functions
-- ✅ **Performance** - Cached references, batch operations
-- ✅ **User feedback** - Loading states, success messages
+### Drag-and-Drop Not Working
+- **Solution:** Must drag the "👆 Drag to Board" template, not other elements
+- Drop must be inside one of the three columns
 
 ---
 
-## 🤝 Contributing
+## 📝 Development
 
-This is a production-ready template. Feel free to:
-- Fork and customize for your team
-- Add new features (labels, due dates, etc.)
-- Improve the UI/UX
-- Submit issues or suggestions
+### File Structure
+```
+miro-planner/
+├── index.html          # Sidebar UI (board-centric, minimal)
+├── app.js             # Core logic (850 lines)
+├── modal.html         # Task form UI
+├── modal.js           # Form handler
+└── README.md          # This file
+```
+
+### Event Flow
+
+**Creating a Task:**
+```
+User clicks "New Task" button
+  → app.js opens modal (miro.board.ui.openModal)
+  → modal.html loads with empty form
+  → modal.js populates assignee dropdown
+  → User fills form and clicks "Create Task"
+  → modal.js returns data to app.js
+  → app.js creates App Card with data
+  → app.js places card in correct frame
+  → app.js updates dashboard stats
+```
+
+**Editing a Task:**
+```
+User clicks card on board
+  → Miro fires 'app_card:click' event
+  → app.js opens modal with cardId parameter
+  → modal.html loads with form
+  → modal.js fetches card data from board
+  → modal.js populates form with current values
+  → User makes changes and clicks "Save"
+  → modal.js returns updated data
+  → app.js updates card title, description, style
+  → app.js moves card to new frame if status changed
+  → app.js updates dashboard stats
+```
+
+### Adding New Features
+
+To add a new priority level:
+1. Update `PRIORITY_CONFIG` in app.js
+2. Add option to priority dropdown in modal.html
+3. Update `updatePriorityBadge()` in modal.js
+
+To add a new status column:
+1. Update `FRAME_CONFIG` in app.js
+2. Update `boardState.frames` to include new frame key
+3. Add option to status dropdown in modal.html
 
 ---
 
-## 📄 License
+## 📄 Version History
 
-MIT License - Free to use and modify for personal or commercial projects.
+### v3.0 - Board-Centric Edition (Current)
+- ✨ Click cards on board to edit (board-first interaction)
+- ✨ Modal forms replace sidebar forms
+- ✨ Drag-and-drop from sidebar to board
+- ✨ Minimal sidebar with just essential buttons
+- 🐛 Fixed scrolling with flexbox layout (`height: 100vh`)
+- 🎨 Removed all branding for native Miro tool appearance
+
+### v2.1 - Board-Native Edition
+- Native board member integration
+- Automatic card placement inside frames
+- Bi-directional sync with 3-second polling
+- Compact UI improvements
+
+### v2.0 - Professional Edition
+- Upgraded from sticky notes to App Cards
+- Added Frames for Kanban columns
+- Added priority system and auto-sort
+
+### v1.0 - Initial Release
+- Basic sticky note planner
+- Sidebar-based task creation
 
 ---
 
-## 🙋 Support
+## 🎓 Learning Resources
 
-- **Miro SDK Docs**: https://developers.miro.com/docs
-- **Miro Community**: https://community.miro.com/
-- **SDK Reference**: https://developers.miro.com/docs/web-sdk-reference
-
----
-
-## 🎉 Credits
-
-Built by a **Senior Frontend Engineer** specializing in:
-- Miro Web SDK integrations
-- Vanilla JavaScript applications
-- Professional Kanban/project management tools
-
-**Version**: 2.0  
-**Last Updated**: January 2026  
-**Miro SDK**: v2.0
+- [Miro Web SDK v2.0 Documentation](https://developers.miro.com/docs/web-sdk-reference)
+- [App Cards API](https://developers.miro.com/docs/app-card)
+- [Frames API](https://developers.miro.com/docs/frame)
+- [Modal UI](https://developers.miro.com/docs/ui_openmodal)
 
 ---
 
-**Happy Planning! 🚀**
+## 🤝 Support
+
+For issues or questions:
+1. Check the **Troubleshooting** section above
+2. Review the browser console for error messages
+3. Ensure Miro SDK v2.0 is loaded correctly
+4. Verify all HTML/JS files are in the same directory
+
+---
+
+## 📜 License
+
+This is a custom Miro app built with the Miro Web SDK v2.0.
+
+---
+
+**Built with ❤️ using Miro Web SDK v2.0**
